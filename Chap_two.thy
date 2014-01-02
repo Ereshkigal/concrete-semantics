@@ -57,10 +57,21 @@ lemma snoc_cons[simp]: "snoc (y # ss) a = y # (snoc ss a)"
 apply(auto)
 done
 
-lemma rev_snoc: "rev (snoc xs y) = y # rev xs"
+lemma rev_snoc[simp]: "rev (snoc xs y) = y # rev xs"
 apply(induction xs)
 apply(auto)
 done
+
+lemma rev_revx: "rev (rev xs) = xs"
+apply(induction xs)
+apply(auto)
+done
+
+(* 2.5 *)
+
+fun sum :: "nat \<Rightarrow> nat" where
+"sum 0 = 0" |
+"sum (Suc n) = add (Suc n) (sum n)"
 
 end
 
