@@ -62,7 +62,7 @@ apply(induction xs)
 apply(auto)
 done
 
-lemma rev_revx: "rev (rev xs) = xs"
+lemma rev_rev: "rev (rev xs) = xs"
 apply(induction xs)
 apply(auto)
 done
@@ -72,6 +72,16 @@ done
 fun sum :: "nat \<Rightarrow> nat" where
 "sum 0 = 0" |
 "sum (Suc n) = add (Suc n) (sum n)"
+
+lemma add_mul2[simp]: "add n (m div 2) = (2*n + m) div 2"
+apply(induction n)
+apply(auto)
+done
+
+lemma sum_is: "sum n = n * (n + 1) div 2"
+apply(induction n)
+apply(auto)
+done
 
 end
 
