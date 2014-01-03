@@ -32,6 +32,15 @@ apply(induction a)
 apply(auto)
 done
 
+fun double :: "nat \<Rightarrow> nat" where
+"double 0 = 0" |
+"double (Suc n) = Suc (Suc (double n))"
+
+lemma double_add: "double n = add n n"
+apply(induction n)
+apply(auto)
+done
+
 (* 2.3 *)
 
 fun count_e :: "'a \<Rightarrow> 'a list \<Rightarrow> nat" where
