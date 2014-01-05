@@ -92,5 +92,24 @@ apply(induction n)
 apply(auto)
 done
 
+(* 2.6 *)
+
+datatype 'a tree = Tip | Node "'a tree" 'a "'a tree"
+
+fun contents :: "'a tree \<Rightarrow> 'a list" where
+"contents Tip = Nil" |
+"contents (Node l a r) = a # ((contents l) @ (contents r))"
+
+fun treesum :: "nat tree \<Rightarrow> nat" where
+"treesum Tip = 0" |
+"treesum (Node l a r) = a + (treesum l) + (treesum r)"
+
+lemma tree_list: "treesum x = listsum (contents x)"
+apply(induction)
+apply(auto)
+done
+
+
+
 end
 
