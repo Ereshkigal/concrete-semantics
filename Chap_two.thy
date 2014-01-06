@@ -111,28 +111,34 @@ done
 
 (* 2.7 *)
 
-datatype 'a tree2 = Tip 'a | Node "'a tree2" 'a "'a tree2"
+datatype 'a tree2 = Tip 'a | Right 'a "'a tree2" | Left 'a "'a tree2" | Node "'a tree2" 'a "'a tree2"
 
 fun rev :: "'a list => 'a list" where
 "rev Nil = Nil" |
 "rev (Cons x xs) = (rev xs) @ (Cons x Nil)"
 
-lemma rev_lemm[simp]: "rev (a @ b) = (rev b) @ (rev a)"
-apply(induction a)
-apply(auto)
-done
-
 fun mirror :: "'a tree2 \<Rightarrow> 'a tree2" where
 "mirror (Tip a) = Tip a" |
+"mirror (Right a r) = Left a (mirror r)" |
+"mirror (Left a l) = Right a (mirror l)" |
 "mirror (Node l a r) = Node (mirror r) a (mirror l)"
 
 fun pre_order :: "'a tree2 \<Rightarrow> 'a list" where
 "pre_order (Tip a) = [a]" |
+"pre_order (Right a r) = a # (pre_order r)" |
+"pre_order (Left a l) = a # (pre_order l)" |
 "pre_order (Node l a r) = a # (pre_order l) @ (pre_order r)"
 
 fun post_order :: "'a tree2 \<Rightarrow> 'a list" where
 "post_order (Tip a) = [a]" |
+"post_order (Right a r) = (post_order r) @ [a]" |
+"post_order (Left a l) = (post_order l) @ [a]" |
 "post_order (Node l a r) = (post_order l) @ (post_order r) @ [a]"
+
+lemma rev_lemm[simp]: "rev (a @ b) = (rev b) @ (rev a)"
+apply(induction a)
+apply(auto)
+done
 
 lemma rev_order: "pre_order (mirror t) = rev (post_order t)"
 apply(induction t)
@@ -141,6 +147,14 @@ done
 
 (* 2.8 *)
 
+fun intersperse :: "'a \<Rightarrow> 'a list \<Rightarrow> 'a list" where
+"intersperse a [] = []" |
+"intersperse a (x # xs) = [a, x] @ (intersperse a xs)"
+
+lemma map_intersperse: "map f (intersperse a xs) = intersperse (f a) (map f xs)"
+apply(induction xs) 
+apply(auto)
+done
 
 end
 
