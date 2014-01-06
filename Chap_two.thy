@@ -58,20 +58,20 @@ fun snoc :: "'a list \<Rightarrow> 'a => 'a list" where
 "snoc [] y = [y]" |
 "snoc (x # xs) y = x # (snoc xs y)" 
 
-fun rev :: "'a list \<Rightarrow> 'a list" where
-"rev [] = []" |
-"rev (x # xs) = snoc (rev xs) x"
+fun rev2 :: "'a list \<Rightarrow> 'a list" where
+"rev2 [] = []" |
+"rev2 (x # xs) = snoc (rev2 xs) x"
 
 lemma snoc_cons[simp]: "snoc (y # ss) a = y # (snoc ss a)"
 apply(auto)
 done
 
-lemma rev_snoc[simp]: "rev (snoc xs y) = y # rev xs"
+lemma rev2_snoc[simp]: "rev2 (snoc xs y) = y # rev2 xs"
 apply(induction xs)
 apply(auto)
 done
 
-lemma rev_rev: "rev (rev xs) = xs"
+lemma rev2_rev2: "rev2 (rev2 xs) = xs"
 apply(induction xs)
 apply(auto)
 done
@@ -113,6 +113,15 @@ done
 
 datatype 'a tree2 = Tip 'a | Node "'a tree2" 'a "'a tree2"
 
+fun rev :: "'a list => 'a list" where
+"rev Nil = Nil" |
+"rev (Cons x xs) = (rev xs) @ (Cons x Nil)"
+
+lemma rev_lemm[simp]: "rev (a @ b) = (rev b) @ (rev a)"
+apply(induction a)
+apply(auto)
+done
+
 fun mirror :: "'a tree2 \<Rightarrow> 'a tree2" where
 "mirror (Tip a) = Tip a" |
 "mirror (Node l a r) = Node (mirror r) a (mirror l)"
@@ -129,6 +138,9 @@ lemma rev_order: "pre_order (mirror t) = rev (post_order t)"
 apply(induction t)
 apply(auto)
 done
+
+(* 2.8 *)
+
 
 end
 
