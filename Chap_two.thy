@@ -62,10 +62,6 @@ fun rev2 :: "'a list \<Rightarrow> 'a list" where
 "rev2 [] = []" |
 "rev2 (x # xs) = snoc (rev2 xs) x"
 
-lemma snoc_cons[simp]: "snoc (y # ss) a = y # (snoc ss a)"
-apply(auto)
-done
-
 lemma rev2_snoc[simp]: "rev2 (snoc xs y) = y # rev2 xs"
 apply(induction xs)
 apply(auto)
@@ -167,4 +163,22 @@ apply(induction m arbitrary: n)
 apply(auto)
 done
 
+(* 2.10 *)
+
+datatype tree0 = Tip | Node tree0 tree0
+
+fun nodes :: "tree0 \<Rightarrow> nat" where
+"nodes Tip = 0" |
+"nodes (Node l r) = Suc((nodes l) + (nodes r))"
+
+fun explode :: "nat \<Rightarrow> tree0 \<Rightarrow> tree0" where
+"explode 0 t = t" | 
+"explode (Suc n) t = explode n (Node t t)"
+
+lemma explode_nodes: "nodes (explode n t) =  (2^n) * (nodes t) + 2^n - 1"
+apply(induction n arbitrary: t)
+apply(auto simp add: algebra_simps)
+done
+
+(* 2.11 *)
 
