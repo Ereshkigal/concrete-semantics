@@ -156,5 +156,15 @@ apply(induction xs)
 apply(auto)
 done
 
-end
+(* 2.9 *)
+
+fun itadd :: "nat \<Rightarrow> nat \<Rightarrow> nat" where
+"itadd 0 n = n" |
+"itadd (Suc m) n = itadd m (Suc n)"
+
+lemma add_itadd: "itadd m n = add m n"
+apply(induction m arbitrary: n)
+apply(auto)
+done
+
 
