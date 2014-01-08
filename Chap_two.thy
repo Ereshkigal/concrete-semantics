@@ -182,3 +182,36 @@ done
 
 (* 2.11 *)
 
+datatype exp = Const int | Var | Add exp exp | Mul exp exp
+
+fun eval :: "exp \<Rightarrow> int \<Rightarrow> int" where
+"eval (Const a) x = a" |
+"eval Var x = x" |
+"eval (Add a b) x = (eval a x) + (eval b x)" |
+"eval (Mul a b) x = (eval a x) * (eval b x)" 
+
+fun dot_add :: "int list \<Rightarrow> int list \<Rightarrow> int list" where
+"dot_add [] x = x" |
+"dot_add x [] = x" |
+"dot_add (x # xs) (y # ys) = (x + y) # (dot_add xs ys)"
+
+fun mul_const :: "int \<Rightarrow> int list \<Rightarrow> int list" where 
+"mul_const a [] = []" |
+"mul_const a (x # xs) = (a * x) # (mul_const a xs)"
+
+fun dot_mul :: "int list \<Rightarrow> int list \<Rightarrow> int list" where
+"dot_mul [] x = []" |                               
+"dot_mul (x # xs) ys = dot_add (mul_const x ys) (0 # (dot_mul xs ys))"  
+
+fun coeffs :: "exp \<Rightarrow> int list" where
+"coeffs (Const a) = [a]" |
+"coeffs Var = []" |
+"coeffs (Add x y) = dot_add (coeffs x) (coeffs y)" |
+"coeffs (Mul x y) = dot_mul (coeffs x) (coeffs y)"
+
+fun evalp :: "int list \<Rightarrow> int \<Rightarrow> int" where
+"evalp [] x = 0" |
+"evalp (y # ys) x = y + x * (evalp ys x)"
+
+
+end
