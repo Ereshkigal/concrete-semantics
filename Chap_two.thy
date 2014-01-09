@@ -214,4 +214,14 @@ fun evalp :: "int list \<Rightarrow> int \<Rightarrow> int" where
 "evalp (y # ys) x = y + x * (evalp ys x)"
 
 
+lemma dotadd_evalpz[simp]: "evalp (dot_add xs  []) a = evalp xs a + evalp [] a"
+apply(induction xs)
+apply(auto)
+done
+
+lemma dotadd_evalp: "evalp (dot_add xs  (y # ys)) a = evalp xs a + evalp (y # ys) a"
+apply(induction xs arbitrary: ys)
+apply(auto simp add: algebra_simps)
+done
+
 end
