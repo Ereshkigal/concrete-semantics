@@ -213,14 +213,22 @@ fun evalp :: "int list \<Rightarrow> int \<Rightarrow> int" where
 "evalp [] x = 0" |
 "evalp (y # ys) x = y + x * (evalp ys x)"
 
-
-lemma dotadd_evalpz[simp]: "evalp (dot_add xs  []) a = evalp xs a + evalp [] a"
-apply(induction xs)
-apply(auto)
+lemma common_div: "(a::int) * x + a * y = a*(x+y)"
+apply(auto simp add: algebra_simps)
 done
 
-lemma dotadd_evalp: "evalp (dot_add xs  (y # ys)) a = evalp xs a + evalp (y # ys) a"
-apply(induction xs arbitrary: ys)
+lemma dotadd_evalp[simp]: "evalp (dot_add as bs) k = evalp as k + evalp bs k"
+apply(induction as bs rule: dot_add.induct)
+apply(auto simp add: common_div)
+done
+
+lemma mulconst_evalp[simp]: "evalp (mul_const a xs) k = a * evalp xs k"
+apply(induction xs)
+apply(auto simp add: algebra_simps)
+done 
+
+lemma dotmul_evalp[simp]: "evalp (dot_mul xs ys) k = (evalp xs k) * (evalp ys k)"
+apply(induction xs)
 apply(auto simp add: algebra_simps)
 done
 
