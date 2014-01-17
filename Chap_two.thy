@@ -205,7 +205,7 @@ fun dot_mul :: "int list \<Rightarrow> int list \<Rightarrow> int list" where
 
 fun coeffs :: "exp \<Rightarrow> int list" where
 "coeffs (Const a) = [a]" |
-"coeffs Var = []" |
+"coeffs Var = [0, 1]" |
 "coeffs (Add x y) = dot_add (coeffs x) (coeffs y)" |
 "coeffs (Mul x y) = dot_mul (coeffs x) (coeffs y)"
 
@@ -230,6 +230,11 @@ done
 lemma dotmul_evalp[simp]: "evalp (dot_mul xs ys) k = (evalp xs k) * (evalp ys k)"
 apply(induction xs)
 apply(auto simp add: algebra_simps)
+done
+
+theorem evalp_eval: "evalp (coeffs x) k = eval x k"
+apply(induction x)
+apply(auto)
 done
 
 end
