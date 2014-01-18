@@ -47,5 +47,27 @@ apply(induction p)
 apply(auto split: aexp.split)
 done
 
+(* 3.2 *)
+
+fun full_asimp :: "aexp \<Rightarrow> aexp" where
+"full_asimp (N a) = N a" |
+"full_asimp (V x) = V x" |
+"full_asimp (Plus p q) = 
+ (case (full_asimp p, full_asimp q) of
+  (Plus x (N a), Plus y (N b)) \<Rightarrow> Plus (Plus x y) (N (a+b)) |
+  (N a, N b) \<Rightarrow> N (a+b) |
+  (Plus x (N a), N b) \<Rightarrow> Plus x (N (a+b)) |
+  (N a, Plus x (N b)) \<Rightarrow> Plus x (N (a+b)) |
+  (Plus x (N a), y) \<Rightarrow> Plus (Plus x y) (N a) |
+  (x, Plus y (N a)) \<Rightarrow> Plus (Plus x y) (N a) |
+  (N a, x) \<Rightarrow> Plus x (N a) |
+  (x, y) \<Rightarrow> Plus x y)"
+
+lemma "aval (full_asimp x) s = aval x s"
+apply(induction x)
+apply(auto split: aexp.split)
+done
+
+(* 3.3 *)
 
 end
