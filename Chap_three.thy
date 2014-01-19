@@ -70,4 +70,73 @@ done
 
 (* 3.3 *)
 
+fun subst :: "vname \<Rightarrow> aexp \<Rightarrow> aexp \<Rightarrow> aexp" where
+"subst x p (N a) = N a" |
+"subst x p (V y) = (if x = y then p else (V y))" |
+"subst x p (Plus q r) = Plus (subst x p q) (subst x p r)"
+
+lemma aval_subst[simp]: "aval (subst x p e) s = aval e (s(x := aval p s))"
+apply(induction e)
+apply(auto)
+done
+
+lemma "aval p s = aval q s \<Longrightarrow> aval (subst x p e) s = aval (subst x q e) s"
+apply(auto)
+done
+
+(* 3.4 *)
+
+datatype aexpm = N int | V vname | Plus aexpm aexpm | Times aexpm aexpm
+
+fun avalm :: "aexpm \<Rightarrow> state \<Rightarrow> val" where
+"avalm (N a) s = a" |
+"avalm (V x) s = s x" |
+"avalm (Plus a b) s = avalm a s + avalm b s" |
+"avalm (Times a b) s = avalm a s * avalm b s"
+
+fun plusm :: "aexpm \<Rightarrow> aexpm \<Rightarrow> aexpm" where
+"plusm (N a) (N b) = N (a+b)" |
+"plusm p (N i) = (if i = 0 then p else Plus p (N i))" |
+"plusm (N i) p = (if i = 0 then p else Plus (N i) p)" |
+"plusm p q = (Plus p q)"
+
+fun timesm :: "aexpm \<Rightarrow> aexpm \<Rightarrow> aexpm" where
+"timesm (N a) (N b) = N (a*b)" |
+"timesm p (N i) = (if i = 0 then (N 0) else (if i=1 then p else Times p (N i)))" |
+"timesm (N i) p = (if i = 0 then (N 0) else (if i=1 then p else Times (N i) p))" |
+"timesm p q = (Times p q)"
+
+fun asimpm :: "aexpm \<Rightarrow> aexpm" where
+"asimpm (N a) = N a" |
+"asimpm (V x) = V x" |
+"asimpm (Plus p q) = plusm (asimpm p) (asimpm q)" |
+"asimpm (Times p q) = timesm (asimpm p) (asimpm q)"
+
+lemma avalm_plusm: "avalm (plusm a b) k = avalm a k + avalm b k"
+apply(induction a b rule: plusm.induct)
+apply(auto)
+done 
+
+lemma avalm_timesm: "avalm (timesm a b) k = avalm a k * avalm b k"
+apply(induction a b rule: timesm.induct)
+apply(auto)
+done
+
+lemma "avalm (asimpm p) s = avalm p s"
+apply(induction p)
+apply(auto simp add: avalm_plusm avalm_timesm)
+done
+
+(* 3.5 *)
+
+datatype aexp2 = N int | V vname | Plus aexp2 aexp2 | Times aexp2 aexp2 | PlusPlus vname
+
+fun aval2 :: "aexp2 \<Rightarrow> state \<Rightarrow> val * state" where
+"aval2 (N a) s = (a, s)" |
+"aval2 (V x) s = (s x, s)" |
+"aval2 (Plus a b) s = (fst (aval2 a s) + fst (aval2 b (snd (aval2 a s))), snd (aval2 b (snd (aval2 a s))))" |
+"aval2 (Times a b) s = (fst (aval2 a s) * fst (aval2 b (snd (aval2 a s))), snd (aval2 b (snd (aval2 a s))))" |
+"aval2 (PlusPlus x) s = (s x, s(x := (s x) + 1))" 
+
+
 end
